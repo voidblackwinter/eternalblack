@@ -1,8 +1,0 @@
-build/
-cmake/
-data/
-
-*.lua
-*.txt
-
-eternalblack
