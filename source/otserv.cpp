@@ -248,7 +248,7 @@ void mainLoader(int, char*[], ServiceManager* services)
 		startupErrorMessage(ss.str());
 		return;
 	}
-	std::cout << asUpperCaseString(worldType) << std::endl;
+	// std::cout << asUpperCaseString(worldType) << std::endl;
 
 	// std::cout << ">> Loading map" << std::endl;
 	if (!g_game.loadMainMap(g_config.getString(ConfigManager::MAP_NAME))) {
