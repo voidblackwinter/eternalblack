@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 	g_loaderSignal.wait(g_loaderUniqueLock);
 
 	if (serviceManager.is_running()) {
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
+		std::cout << "Eternalblack is now online" << std::endl << std::endl;
 #ifdef _WIN32
 		SetConsoleCtrlHandler([](DWORD) -> BOOL {
 			g_dispatcher.addTask(createTask([]() {
@@ -129,9 +129,9 @@ void mainLoader(int, char*[], ServiceManager* services)
 #ifdef _WIN32
 	SetConsoleTitle(STATUS_SERVER_NAME);
 #endif
-	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << std::endl;
-	std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
-	std::cout << "Compiled on " << __DATE__ << ' ' << __TIME__ << " for platform ";
+	std::cout << STATUS_SERVER_NAME << " Version " << STATUS_SERVER_VERSION << " ";
+	//std::cout << "Compiled with " << BOOST_COMPILER << std::endl;
+	std::cout << "[ " << __DATE__ << ' ' << __TIME__ << "] ";
 
 #if defined(__amd64__) || defined(_M_X64)
 	std::cout << "x64" << std::endl;
@@ -142,14 +142,14 @@ void mainLoader(int, char*[], ServiceManager* services)
 #else
 	std::cout << "unknown" << std::endl;
 #endif
-	std::cout << std::endl;
+	// std::cout << std::endl;
 
-	std::cout << "A server developed by " << STATUS_SERVER_DEVELOPERS << std::endl;
-	std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl;
-	std::cout << std::endl;
+	// std::cout << "A server developed by " << STATUS_SERVER_DEVELOPERS << std::endl;
+	// std::cout << "Visit our forum for updates, support, and resources: http://otland.net/." << std::endl;
+	// std::cout << std::endl;
 
 	// read global config
-	std::cout << ">> Loading config" << std::endl;
+	// std::cout << ">> Loading config" << std::endl;
 	if (!g_config.load()) {
 		startupErrorMessage("Unable to load config.lua!");
 		return;
@@ -169,7 +169,7 @@ void mainLoader(int, char*[], ServiceManager* services)
 	const char* q("7630979195970404721891201847792002125535401292779123937207447574596692788513647179235335529307251350570728407373705564708871762033017096809910315212884101");
 	g_RSA.setKey(p, q);
 
-	std::cout << ">> Establishing database connection..." << std::flush;
+	// std::cout << ">> Establishing database connection..." << std::flush;
 
 	Database* db = Database::getInstance();
 	if (!db->connect()) {
@@ -177,10 +177,10 @@ void mainLoader(int, char*[], ServiceManager* services)
 		return;
 	}
 
-	std::cout << " MySQL " << Database::getClientVersion() << std::endl;
+	std::cout << "MySQL " << Database::getClientVersion() << std::endl;
 
 	// run database manager
-	std::cout << ">> Running database manager" << std::endl;
+	// std::cout << ">> Running database manager" << std::endl;
 
 	if (!DatabaseManager::isDatabaseSetup()) {
 		startupErrorMessage("The database you have specified in config.lua is empty, please import the schema.sql to your database.");
@@ -191,18 +191,18 @@ void mainLoader(int, char*[], ServiceManager* services)
 	DatabaseManager::updateDatabase();
 
 	if (g_config.getBoolean(ConfigManager::OPTIMIZE_DATABASE) && !DatabaseManager::optimizeTables()) {
-		std::cout << "> No tables were optimized." << std::endl;
+		std::cout << "No tables were optimized." << std::endl;
 	}
 
-	//load vocations
-	std::cout << ">> Loading vocations" << std::endl;
+	// load vocations
+	// std::cout << ">> Loading vocations" << std::endl;
 	if (!g_vocations.loadFromXml()) {
 		startupErrorMessage("Unable to load vocations!");
 		return;
 	}
 
 	// load item data
-	std::cout << ">> Loading items" << std::endl;
+	// std::cout << ">> Loading items" << std::endl;
 	if (Item::items.loadFromOtb("data/items/items.otb") != ERROR_NONE) {
 		startupErrorMessage("Unable to load items (OTB)!");
 		return;
@@ -213,26 +213,26 @@ void mainLoader(int, char*[], ServiceManager* services)
 		return;
 	}
 
-	std::cout << ">> Loading script systems" << std::endl;
+	// std::cout << ">> Loading script systems" << std::endl;
 	if (!ScriptingManager::getInstance()->loadScriptSystems()) {
 		startupErrorMessage("Failed to load script systems");
 		return;
 	}
 
-	std::cout << ">> Loading monsters" << std::endl;
+	// std::cout << ">> Loading monsters" << std::endl;
 	if (!g_monsters.loadFromXml()) {
 		startupErrorMessage("Unable to load monsters!");
 		return;
 	}
 
-	std::cout << ">> Loading outfits" << std::endl;
+	// std::cout << ">> Loading outfits" << std::endl;
 	Outfits* outfits = Outfits::getInstance();
 	if (!outfits->loadFromXml()) {
 		startupErrorMessage("Unable to load outfits!");
 		return;
 	}
 
-	std::cout << ">> Checking world type... " << std::flush;
+	// std::cout << ">> Checking world type... " << std::flush;
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
 	if (worldType == "pvp") {
 		g_game.setWorldType(WORLD_TYPE_PVP);
@@ -244,19 +244,19 @@ void mainLoader(int, char*[], ServiceManager* services)
 		std::cout << std::endl;
 
 		std::ostringstream ss;
-		ss << "> ERROR: Unknown world type: " << g_config.getString(ConfigManager::WORLD_TYPE) << ", valid world types are: pvp, no-pvp and pvp-enforced.";
+		ss << "ERROR: Unknown world type: " << g_config.getString(ConfigManager::WORLD_TYPE) << ", valid world types are: pvp, no-pvp and pvp-enforced.";
 		startupErrorMessage(ss.str());
 		return;
 	}
 	std::cout << asUpperCaseString(worldType) << std::endl;
 
-	std::cout << ">> Loading map" << std::endl;
+	// std::cout << ">> Loading map" << std::endl;
 	if (!g_game.loadMainMap(g_config.getString(ConfigManager::MAP_NAME))) {
 		startupErrorMessage("Failed to load map");
 		return;
 	}
 
-	std::cout << ">> Initializing gamestate" << std::endl;
+	// std::cout << ">> Initializing gamestate" << std::endl;
 	g_game.setGameState(GAME_STATE_INIT);
 
 	// Game client protocols
@@ -283,7 +283,7 @@ void mainLoader(int, char*[], ServiceManager* services)
 
 	g_game.map.houses.payHouses(rentPeriod);
 
-	std::cout << ">> Loaded all modules, server starting up..." << std::endl;
+	// std::cout << ">> Loaded all modules, server starting up..." << std::endl;
 
 	std::pair<uint32_t, uint32_t> IpNetMask;
 	IpNetMask.first = inet_addr("127.0.0.1");
@@ -324,7 +324,7 @@ void mainLoader(int, char*[], ServiceManager* services)
 
 #ifndef _WIN32
 	if (getuid() == 0 || geteuid() == 0) {
-		std::cout << "> Warning: " << STATUS_SERVER_NAME << " has been executed as root user, please consider running it as a normal user." << std::endl;
+		// std::cout << "> Warning: " << STATUS_SERVER_NAME << " has been executed as root user, please consider running it as a normal user." << std::endl;
 	}
 #endif
 

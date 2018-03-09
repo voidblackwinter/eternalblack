@@ -68,7 +68,7 @@ Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t x, uint16_t y, uint8
 
 bool IOMap::loadMap(Map* map, const std::string& identifier)
 {
-	int64_t start = OTSYS_TIME();
+	// int64_t start = OTSYS_TIME();
 
 	FileLoader f;
 	if (!f.openFile(identifier.c_str(), "OTBM")) {
@@ -121,7 +121,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		std::cout << "[Warning - IOMap::loadMap] This map needs an updated items.otb." << std::endl;
 	}
 
-	std::cout << "> Map size: " << root_header.width << "x" << root_header.height << '.' << std::endl;
+	// std::cout << "> Map size: " << root_header.width << "x" << root_header.height << '.' << std::endl;
 	map->width = root_header.width;
 	map->height = root_header.height;
 
@@ -467,6 +467,6 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		nodeMapData = f.getNextNode(nodeMapData, type);
 	}
 
-	std::cout << "> Map loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	// std::cout << "> Map loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
